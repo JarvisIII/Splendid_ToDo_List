@@ -3,7 +3,7 @@ import type { Task, FilterOptions, Status } from '../types';
 import { TaskCard } from './TaskCard';
 import { TaskForm } from './TaskForm';
 import { FilterBar } from './FilterBar';
-import { formatDate, formatDateDisplay, canEditTask } from '../utils';
+import { formatDate, formatDateDisplay, canEditTask, getWeekDays } from '../utils';
 import { TIME_SLOTS } from '../constants';
 
 interface DailyViewProps {
@@ -22,18 +22,38 @@ export const DailyView = ({ tasks, onAddTask, onUpdateTask, onDeleteTask }: Dail
 
   const dateString = formatDate(selectedDate);
   const canEdit = canEditTask(selectedDate, 'daily');
+  const weekDays = getWeekDays(selectedDate);
+  const weekStart = weekDays[0];
 
   // 選択した日付のタスクを取得
   const dailyTasks = tasks.filter(
     (task) => task.type === 'daily' && task.date === dateString
   );
 
-  // フィルター適用
+  // 選択した日付が含まれる週の週間予定を取得
+  const weeklyTasks = tasks.filter((task) => {
+    if (task.type !== 'weekly') return false;
+    const taskDate = new Date(task.date);
+    const taskWeekDays = getWeekDays(taskDate);
+    return formatDate(taskWeekDays[0]) === formatDate(weekStart);
+  });
+
+  // フィルター適用（当日予定）
   const filteredTasks = dailyTasks.filter((task) => {
     if (filters.category && task.category !== filters.category) return false;
     if (filters.status && task.status !== filters.status) return false;
     if (filters.priority && task.priority !== filters.priority) return false;
     if (hideCompleted && task.status === 'completed') return false;
+    return true;
+  });
+
+  // フィルター適用（週間予定）
+  const filteredWeeklyTasks = weeklyTasks.filter((task) => {
+    if (filters.category && task.category !== filters.category) return false;
+    if (filters.status && task.status !== filters.status) return false;
+    if (filters.priority && task.priority !== filters.priority) return false;
+    if (hideCompleted && task.status === 'completed') return false;
+    if (task.date !== dateString) return false; // 選択した日付のもののみ
     return true;
   });
 
@@ -191,6 +211,27 @@ export const DailyView = ({ tasks, onAddTask, onUpdateTask, onDeleteTask }: Dail
             </div>
           );
         })}
+
+        {/* 週間予定（参照のみ） */}
+        {filteredWeeklyTasks.length > 0 && (
+          <div className="bg-blue-50 border-2 border-blue-200 rounded-lg shadow p-4">
+            <h3 className="font-semibold text-blue-900 mb-3 border-b border-blue-300 pb-2">
+              📅 週間予定（参照のみ）
+            </h3>
+            <div className="space-y-3">
+              {filteredWeeklyTasks.map((task) => (
+                <TaskCard
+                  key={task.id}
+                  task={task}
+                  onEdit={handleEdit}
+                  onDelete={onDeleteTask}
+                  onStatusChange={handleStatusChange}
+                  readonly={true}
+                />
+              ))}
+            </div>
+          </div>
+        )}
       </div>
 
       {/* タスクフォーム */}

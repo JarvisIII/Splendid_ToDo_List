@@ -25,6 +25,7 @@ export const WeeklyView = ({ tasks, onAddTask, onUpdateTask, onDeleteTask }: Wee
   const weekStart = weekDays[0];
   const weekEnd = weekDays[6];
   const canEdit = canEditTask(selectedDate, 'weekly');
+  const currentWeekNumber = getWeekNumber(selectedDate);
 
   // 選択した週のタスクを取得
   const weeklyTasks = tasks.filter((task) => {
@@ -34,8 +35,23 @@ export const WeeklyView = ({ tasks, onAddTask, onUpdateTask, onDeleteTask }: Wee
     return formatDate(taskWeekDays[0]) === formatDate(weekStart);
   });
 
-  // フィルター適用
+  // 選択した週が含まれる月の月間目標を取得
+  const monthlyTasks = tasks.filter((task) => {
+    if (task.type !== 'monthly') return false;
+    return task.weekNumber === currentWeekNumber;
+  });
+
+  // フィルター適用（週間予定）
   const filteredTasks = weeklyTasks.filter((task) => {
+    if (filters.category && task.category !== filters.category) return false;
+    if (filters.status && task.status !== filters.status) return false;
+    if (filters.priority && task.priority !== filters.priority) return false;
+    if (hideCompleted && task.status === 'completed') return false;
+    return true;
+  });
+
+  // フィルター適用（月間目標）
+  const filteredMonthlyTasks = monthlyTasks.filter((task) => {
     if (filters.category && task.category !== filters.category) return false;
     if (filters.status && task.status !== filters.status) return false;
     if (filters.priority && task.priority !== filters.priority) return false;
@@ -183,6 +199,27 @@ export const WeeklyView = ({ tasks, onAddTask, onUpdateTask, onDeleteTask }: Wee
           );
         })}
       </div>
+
+      {/* 月間目標（参照のみ） */}
+      {filteredMonthlyTasks.length > 0 && (
+        <div className="bg-purple-50 border-2 border-purple-200 rounded-lg shadow p-4">
+          <h3 className="font-semibold text-purple-900 mb-3 border-b border-purple-300 pb-2">
+            🎯 月間目標（参照のみ）
+          </h3>
+          <div className="space-y-3">
+            {filteredMonthlyTasks.map((task) => (
+              <TaskCard
+                key={task.id}
+                task={task}
+                onEdit={handleEdit}
+                onDelete={onDeleteTask}
+                onStatusChange={handleStatusChange}
+                readonly={true}
+              />
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* タスクフォーム */}
       {showForm && (
