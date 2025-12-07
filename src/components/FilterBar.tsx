@@ -43,7 +43,7 @@ export const FilterBar = ({ filters, onFilterChange }: FilterBarProps) => {
         {/* カテゴリーフィルター */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            種別
+            カテゴリー
           </label>
           <div className="flex flex-wrap gap-2">
             <button
@@ -56,7 +56,7 @@ export const FilterBar = ({ filters, onFilterChange }: FilterBarProps) => {
                 }
               `}
             >
-              すべて
+              All
             </button>
             {(Object.keys(CATEGORY_CONFIG) as Category[]).map((cat) => {
               const config = CATEGORY_CONFIG[cat];
@@ -82,7 +82,7 @@ export const FilterBar = ({ filters, onFilterChange }: FilterBarProps) => {
         {/* ステータスフィルター */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            状態
+            ステータス
           </label>
           <div className="flex flex-wrap gap-2">
             <button
@@ -95,7 +95,7 @@ export const FilterBar = ({ filters, onFilterChange }: FilterBarProps) => {
                 }
               `}
             >
-              すべて
+              All
             </button>
             {(Object.keys(STATUS_CONFIG) as Status[]).map((stat) => {
               const config = STATUS_CONFIG[stat];
@@ -134,7 +134,7 @@ export const FilterBar = ({ filters, onFilterChange }: FilterBarProps) => {
                 }
               `}
             >
-              すべて
+              All
             </button>
             {(Object.keys(PRIORITY_CONFIG) as Priority[]).map((pri) => {
               const config = PRIORITY_CONFIG[pri];
