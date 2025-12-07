@@ -77,6 +77,14 @@ export const MonthlyView = ({ tasks, onAddTask, onUpdateTask, onDeleteTask }: Mo
 
   const handleStatusChange = (id: string, status: Status) => {
     onUpdateTask(id, { status });
+
+    // ステータスを「遅延」に変更した場合、編集メニューを自動表示
+    if (status === 'postponed') {
+      const task = tasks.find(t => t.id === id);
+      if (task) {
+        handleEdit(task);
+      }
+    }
   };
 
   const handleMonthChange = (months: number) => {

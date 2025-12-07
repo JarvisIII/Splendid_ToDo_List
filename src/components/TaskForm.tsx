@@ -20,14 +20,22 @@ export const TaskForm = ({ task, initialDate, initialType, onSubmit, onCancel }:
   const [date, setDate] = useState(task?.date || (initialDate ? formatDate(initialDate) : ''));
   const [timeSlot, setTimeSlot] = useState<TimeSlot | ''>(task?.timeSlot || '');
   const [isAllDay, setIsAllDay] = useState(false);
+  const [previousType, setPreviousType] = useState<TaskType>(task?.type || initialType || 'daily');
 
   // 終日選択時に自動的に週間予定に変更
   useEffect(() => {
     if (isAllDay) {
-      setType('weekly');
+      // 終日にチェックが入ったら、現在のタイプを保存して週間予定に変更
+      if (type !== 'weekly') {
+        setPreviousType(type);
+        setType('weekly');
+      }
       setTimeSlot(''); // 時間枠をクリア
+    } else if (previousType !== type && type === 'weekly') {
+      // 終日のチェックを外したら、以前のタイプに戻す
+      setType(previousType);
     }
-  }, [isAllDay]);
+  }, [isAllDay, type, previousType]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
