@@ -43,7 +43,7 @@ export const FilterBar = ({ filters, onFilterChange }: FilterBarProps) => {
         {/* カテゴリーフィルター */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            カテゴリー
+            種別
           </label>
           <div className="flex flex-wrap gap-2">
             <button
@@ -82,7 +82,7 @@ export const FilterBar = ({ filters, onFilterChange }: FilterBarProps) => {
         {/* ステータスフィルター */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            ステータス
+            状態
           </label>
           <div className="flex flex-wrap gap-2">
             <button
