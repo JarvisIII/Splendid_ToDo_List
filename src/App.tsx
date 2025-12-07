@@ -2,10 +2,11 @@ import { useState } from 'react';
 import { DailyView } from './components/DailyView';
 import { WeeklyView } from './components/WeeklyView';
 import { MonthlyView } from './components/MonthlyView';
+import { MatrixView } from './components/MatrixView';
 import { useTasks } from './hooks/useTasks';
 import type { TaskType } from './types';
 
-type ViewType = TaskType;
+type ViewType = TaskType | 'matrix';
 
 function App() {
   const [currentView, setCurrentView] = useState<ViewType>('daily');
@@ -70,6 +71,18 @@ function App() {
             >
               月間目標
             </button>
+            <button
+              onClick={() => setCurrentView('matrix')}
+              className={`
+                py-4 px-1 border-b-2 font-medium text-sm transition-colors
+                ${currentView === 'matrix'
+                  ? 'border-blue-500 text-blue-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                }
+              `}
+            >
+              マトリクス
+            </button>
           </div>
         </div>
       </nav>
@@ -94,6 +107,14 @@ function App() {
         )}
         {currentView === 'monthly' && (
           <MonthlyView
+            tasks={tasks}
+            onAddTask={addTask}
+            onUpdateTask={updateTask}
+            onDeleteTask={deleteTask}
+          />
+        )}
+        {currentView === 'matrix' && (
+          <MatrixView
             tasks={tasks}
             onAddTask={addTask}
             onUpdateTask={updateTask}
