@@ -28,11 +28,11 @@ export const formatDate = (date: Date): string => {
 };
 
 /**
- * 日付を表示用にフォーマット（例: 2025年12月7日（土））
+ * 日付を表示用にフォーマット（例: 12/7(土)）
  */
 export const formatDateDisplay = (date: Date | string): string => {
   const d = typeof date === 'string' ? parseISO(date) : date;
-  return format(d, 'yyyy年M月d日(E)', { locale: ja });
+  return format(d, 'M/d(E)', { locale: ja });
 };
 
 /**

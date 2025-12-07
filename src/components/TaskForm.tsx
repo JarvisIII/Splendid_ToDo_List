@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import type { Task, Category, Priority, TaskType, TimeSlot } from '../types';
 import { CATEGORY_CONFIG, PRIORITY_CONFIG, TIME_SLOTS } from '../constants';
 import { formatDate, generateId, getWeekNumber } from '../utils';
@@ -19,6 +19,15 @@ export const TaskForm = ({ task, initialDate, initialType, onSubmit, onCancel }:
   const [type, setType] = useState<TaskType>(task?.type || initialType || 'daily');
   const [date, setDate] = useState(task?.date || (initialDate ? formatDate(initialDate) : ''));
   const [timeSlot, setTimeSlot] = useState<TimeSlot | ''>(task?.timeSlot || '');
+  const [isAllDay, setIsAllDay] = useState(false);
+
+  // 終日選択時に自動的に週間予定に変更
+  useEffect(() => {
+    if (isAllDay) {
+      setType('weekly');
+      setTimeSlot(''); // 時間枠をクリア
+    }
+  }, [isAllDay]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -144,44 +153,61 @@ export const TaskForm = ({ task, initialDate, initialType, onSubmit, onCancel }:
               </div>
             </div>
 
-            {/* タスクタイプ */}
+            {/* 終日オプション */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                タスクタイプ <span className="text-red-500">*</span>
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={isAllDay}
+                  onChange={(e) => setIsAllDay(e.target.checked)}
+                  className="w-4 h-4 text-blue-600 rounded focus:ring-2 focus:ring-blue-500"
+                />
+                <span className="text-sm font-medium text-gray-700">
+                  終日（週間予定として登録）
+                </span>
               </label>
-              <div className="flex gap-2">
-                <button
-                  type="button"
-                  onClick={() => setType('daily')}
-                  className={`
-                    px-4 py-2 rounded-md border-2 transition-all
-                    ${type === 'daily' ? 'border-blue-500 bg-blue-50 text-blue-700' : 'border-gray-300 bg-white text-gray-700 hover:bg-gray-50'}
-                  `}
-                >
-                  当日予定
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setType('weekly')}
-                  className={`
-                    px-4 py-2 rounded-md border-2 transition-all
-                    ${type === 'weekly' ? 'border-blue-500 bg-blue-50 text-blue-700' : 'border-gray-300 bg-white text-gray-700 hover:bg-gray-50'}
-                  `}
-                >
-                  週間予定
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setType('monthly')}
-                  className={`
-                    px-4 py-2 rounded-md border-2 transition-all
-                    ${type === 'monthly' ? 'border-blue-500 bg-blue-50 text-blue-700' : 'border-gray-300 bg-white text-gray-700 hover:bg-gray-50'}
-                  `}
-                >
-                  月間目標
-                </button>
-              </div>
             </div>
+
+            {/* タスクタイプ */}
+            {!isAllDay && (
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  タスクタイプ <span className="text-red-500">*</span>
+                </label>
+                <div className="flex gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setType('daily')}
+                    className={`
+                      px-4 py-2 rounded-md border-2 transition-all
+                      ${type === 'daily' ? 'border-blue-500 bg-blue-50 text-blue-700' : 'border-gray-300 bg-white text-gray-700 hover:bg-gray-50'}
+                    `}
+                  >
+                    当日予定
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setType('weekly')}
+                    className={`
+                      px-4 py-2 rounded-md border-2 transition-all
+                      ${type === 'weekly' ? 'border-blue-500 bg-blue-50 text-blue-700' : 'border-gray-300 bg-white text-gray-700 hover:bg-gray-50'}
+                    `}
+                  >
+                    週間予定
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setType('monthly')}
+                    className={`
+                      px-4 py-2 rounded-md border-2 transition-all
+                      ${type === 'monthly' ? 'border-blue-500 bg-blue-50 text-blue-700' : 'border-gray-300 bg-white text-gray-700 hover:bg-gray-50'}
+                    `}
+                  >
+                    月間目標
+                  </button>
+                </div>
+              </div>
+            )}
 
             {/* 日付 */}
             <div>
@@ -199,7 +225,7 @@ export const TaskForm = ({ task, initialDate, initialType, onSubmit, onCancel }:
             </div>
 
             {/* 時間枠（当日予定のみ） */}
-            {type === 'daily' && (
+            {!isAllDay && type === 'daily' && (
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   時間枠
