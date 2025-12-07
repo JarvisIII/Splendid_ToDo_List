@@ -18,6 +18,7 @@ export const DailyView = ({ tasks, onAddTask, onUpdateTask, onDeleteTask }: Dail
   const [showForm, setShowForm] = useState(false);
   const [editingTask, setEditingTask] = useState<Task | undefined>();
   const [filters, setFilters] = useState<FilterOptions>({});
+  const [hideCompleted, setHideCompleted] = useState(false);
 
   const dateString = formatDate(selectedDate);
   const canEdit = canEditTask(selectedDate, 'daily');
@@ -32,6 +33,7 @@ export const DailyView = ({ tasks, onAddTask, onUpdateTask, onDeleteTask }: Dail
     if (filters.category && task.category !== filters.category) return false;
     if (filters.status && task.status !== filters.status) return false;
     if (filters.priority && task.priority !== filters.priority) return false;
+    if (hideCompleted && task.status === 'completed') return false;
     return true;
   });
 
@@ -116,8 +118,45 @@ export const DailyView = ({ tasks, onAddTask, onUpdateTask, onDeleteTask }: Dail
       {/* フィルター */}
       <FilterBar filters={filters} onFilterChange={setFilters} />
 
+      {/* 完了タスク表示切り替え */}
+      <div className="bg-white rounded-lg shadow p-4">
+        <label className="flex items-center gap-2 cursor-pointer">
+          <input
+            type="checkbox"
+            checked={hideCompleted}
+            onChange={(e) => setHideCompleted(e.target.checked)}
+            className="w-4 h-4 text-blue-600 rounded focus:ring-2 focus:ring-blue-500"
+          />
+          <span className="text-sm font-medium text-gray-700">完了済みを非表示</span>
+        </label>
+      </div>
+
       {/* タスク一覧（時間枠ごと） */}
       <div className="space-y-6">
+        {/* 時間枠未設定のタスク（常に上部に表示） */}
+        <div className="bg-white rounded-lg shadow p-4">
+          <h3 className="font-semibold text-gray-900 mb-3 border-b pb-2">
+            時間枠未設定
+          </h3>
+          {unscheduledTasks.length > 0 ? (
+            <div className="space-y-3">
+              {unscheduledTasks.map((task) => (
+                <TaskCard
+                  key={task.id}
+                  task={task}
+                  onEdit={handleEdit}
+                  onDelete={onDeleteTask}
+                  onStatusChange={handleStatusChange}
+                  readonly={!canEdit}
+                />
+              ))}
+            </div>
+          ) : (
+            <p className="text-sm text-gray-500">予定なし</p>
+          )}
+        </div>
+
+        {/* 時間枠ごとのタスク */}
         {TIME_SLOTS.map((slot) => {
           const slotTasks = tasksByTimeSlot[slot];
           return (
@@ -144,27 +183,6 @@ export const DailyView = ({ tasks, onAddTask, onUpdateTask, onDeleteTask }: Dail
             </div>
           );
         })}
-
-        {/* 時間枠未設定のタスク */}
-        {unscheduledTasks.length > 0 && (
-          <div className="bg-white rounded-lg shadow p-4">
-            <h3 className="font-semibold text-gray-900 mb-3 border-b pb-2">
-              時間枠未設定
-            </h3>
-            <div className="space-y-3">
-              {unscheduledTasks.map((task) => (
-                <TaskCard
-                  key={task.id}
-                  task={task}
-                  onEdit={handleEdit}
-                  onDelete={onDeleteTask}
-                  onStatusChange={handleStatusChange}
-                  readonly={!canEdit}
-                />
-              ))}
-            </div>
-          </div>
-        )}
       </div>
 
       {/* タスクフォーム */}
