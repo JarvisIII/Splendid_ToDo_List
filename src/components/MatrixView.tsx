@@ -113,7 +113,7 @@ export const MatrixView = ({ tasks, onAddTask, onUpdateTask, onDeleteTask }: Mat
     <div className="space-y-6">
       {/* ヘッダー */}
       <div className="bg-white rounded-lg shadow p-6">
-        <h2 className="text-2xl font-bold mb-2">アイゼンハワーマトリクス</h2>
+        <h2 className="text-2xl font-bold mb-2">総評</h2>
         <p className="text-sm text-gray-600">
           全タスクを重要度×緊急度で分類（緊急 = 期限まで3日以内）
         </p>

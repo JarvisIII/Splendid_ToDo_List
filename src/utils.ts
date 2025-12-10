@@ -208,3 +208,21 @@ export const getMonthLabel = (year: number, month: number): string => {
 export const generateId = (): string => {
   return `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
 };
+
+/**
+ * 年内の経過日数を取得（1月1日 = 0）
+ */
+export const getDayOfYear = (date: Date): number => {
+  const start = new Date(date.getFullYear(), 0, 0);
+  const diff = date.getTime() - start.getTime();
+  const oneDay = 1000 * 60 * 60 * 24;
+  return Math.floor(diff / oneDay) - 1; // 0始まりに調整
+};
+
+/**
+ * 年内の残り日数を取得
+ */
+export const getDaysLeftInYear = (date: Date): number => {
+  const dayOfYear = getDayOfYear(date);
+  return 365 - dayOfYear - 1; // 今日を除く
+};

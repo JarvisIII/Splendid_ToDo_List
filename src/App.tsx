@@ -45,7 +45,7 @@ function App() {
                 }
               `}
             >
-              当日予定
+              単日
             </button>
             <button
               onClick={() => setCurrentView('weekly')}
@@ -57,7 +57,7 @@ function App() {
                 }
               `}
             >
-              週間予定
+              週間
             </button>
             <button
               onClick={() => setCurrentView('monthly')}
@@ -69,7 +69,7 @@ function App() {
                 }
               `}
             >
-              月間目標
+              月間
             </button>
             <button
               onClick={() => setCurrentView('matrix')}
@@ -81,7 +81,7 @@ function App() {
                 }
               `}
             >
-              マトリクス
+              総評
             </button>
           </div>
         </div>
