@@ -103,7 +103,7 @@ export const DailyView = ({ tasks, onAddTask, onUpdateTask, onDeleteTask }: Dail
     <div className="space-y-6">
       {/* ヘッダー */}
       <div className="bg-white rounded-lg shadow p-6">
-        <h2 className="text-2xl font-bold mb-4">当日予定</h2>
+        <h2 className="text-2xl font-bold mb-4">単日</h2>
 
         {/* 日付選択 */}
         <div className="flex items-center gap-4 mb-4">

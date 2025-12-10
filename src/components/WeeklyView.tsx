@@ -3,7 +3,7 @@ import type { Task, FilterOptions, Status } from '../types';
 import { TaskCard } from './TaskCard';
 import { TaskForm } from './TaskForm';
 import { FilterBar } from './FilterBar';
-import { formatDate, formatDateDisplay, canEditTask, getWeekDays, getWeekNumber } from '../utils';
+import { formatDate, canEditTask, getWeekDays, getWeekNumber, getDayOfYear, getDaysLeftInYear } from '../utils';
 import { addDays } from 'date-fns';
 import { WEEKDAYS } from '../constants';
 
@@ -23,7 +23,6 @@ export const WeeklyView = ({ tasks, onAddTask, onUpdateTask, onDeleteTask }: Wee
 
   const weekDays = getWeekDays(selectedDate);
   const weekStart = weekDays[0];
-  const weekEnd = weekDays[6];
   const canEdit = canEditTask(selectedDate, 'weekly');
   const currentWeekNumber = getWeekNumber(selectedDate);
 
@@ -102,7 +101,7 @@ export const WeeklyView = ({ tasks, onAddTask, onUpdateTask, onDeleteTask }: Wee
     <div className="space-y-6">
       {/* ヘッダー */}
       <div className="bg-white rounded-lg shadow p-6">
-        <h2 className="text-2xl font-bold mb-4">週間予定</h2>
+        <h2 className="text-2xl font-bold mb-4">週間</h2>
 
         {/* 週選択 */}
         <div className="flex items-center gap-4 mb-4">
@@ -114,10 +113,7 @@ export const WeeklyView = ({ tasks, onAddTask, onUpdateTask, onDeleteTask }: Wee
           </button>
           <div className="flex-1 text-center">
             <div className="text-xl font-semibold">
-              {formatDateDisplay(weekStart)} 〜 {formatDateDisplay(weekEnd)}
-            </div>
-            <div className="text-sm text-gray-600 mt-1">
-              {getWeekNumber(selectedDate)}週目
+              {weekStart.getMonth() + 1}/{weekStart.getDate()} 週
             </div>
             {!canEdit && (
               <div className="text-sm text-orange-600 mt-1">
@@ -169,13 +165,17 @@ export const WeeklyView = ({ tasks, onAddTask, onUpdateTask, onDeleteTask }: Wee
           const dateString = formatDate(day);
           const dayTasks = tasksByDate[dateString] || [];
           const dayOfWeek = WEEKDAYS[(index + 1) % 7]; // 月曜始まりなので調整
+          const psd = getDayOfYear(day);
+          const lft = getDaysLeftInYear(day);
 
           return (
             <div key={dateString} className="bg-white rounded-lg shadow p-4">
               <div className="mb-3 border-b pb-2">
-                <div className="font-semibold text-gray-900">{dayOfWeek}</div>
-                <div className="text-sm text-gray-600">
-                  {day.getMonth() + 1}/{day.getDate()}
+                <div className="font-semibold text-gray-900">
+                  {day.getMonth() + 1}/{day.getDate()} ({dayOfWeek})
+                </div>
+                <div className="text-xs text-gray-600">
+                  ({psd} psd / {lft} lft)
                 </div>
               </div>
 

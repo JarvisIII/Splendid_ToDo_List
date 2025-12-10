@@ -97,7 +97,7 @@ export const MonthlyView = ({ tasks, onAddTask, onUpdateTask, onDeleteTask }: Mo
     <div className="space-y-6">
       {/* ヘッダー */}
       <div className="bg-white rounded-lg shadow p-6">
-        <h2 className="text-2xl font-bold mb-4">月間目標</h2>
+        <h2 className="text-2xl font-bold mb-4">月間</h2>
 
         {/* 月選択 */}
         <div className="flex items-center gap-4 mb-4">
